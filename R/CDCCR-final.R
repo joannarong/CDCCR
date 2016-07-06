@@ -20,6 +20,10 @@ locationf
 genderf=cut(data2[,4],breaks=c(0,1.5,3),labels=c("M","F"))
 genderf
 
+
+agef=cut(data2[,3],breaks=c(15,35,55,75,95))
+agef
+
 repeatreferral=cut(data2[,7],breaks=c(-1,0.5,2),labels=c("No","Yes"))
 repeatreferral
 
