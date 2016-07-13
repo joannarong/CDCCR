@@ -49,23 +49,23 @@ countmh=function(x)
 #made fuction that label the specific values of each co-mobidity
 extractco=function(x)
 {
-  thenames=c("Other","Eat","Hypert","Cardio","Kidney","Retino","Wounds","Neuro","Liver",
-             "Vascular","Obesity","Cancer","Lipidd",
-             "Thyroid","Dementia","Pulmon","sleep",
-             "HIV","Pancreas","Celiac","Genetic","Deafblind","Mental") 
+  thenames=c("Other","Eating Disorders","Hypertension","Cardiovascular disease","Chronic kidney disease",
+             "Retinopathy or Other eye disease"," Non-healing wounds (greater than 3 months)","Neuropathy","Liver disease (fatty liver)",
+             "Peripheral vascular disease","Obesity (BMI > 30)","Current malignancy/cancer treatment","Hyperlipidemia",
+             "Thyroid disease (other endocrinopathies POCT, Cushings)","Dementia","Pulmonary disease (COPD, Asthma)","Obstructive sleep apnea",
+             "HIV/AIDS","Pancreas Diseases","Celiac Disease","Genetic Syndromes","Deafness and/or Blindness","Mental health") 
   M=extractmorbidity(x,23)
   names(M)=thenames
   return(M)
   
 }
 
-
 #made functionthat label the specific values for each chronic-morbidity
 extractchronic=function(x)
 {
-  thenames=c("COther","CNeuro","CRetino","CBlind","CCardio","CWounds",
-             "Amput","Skin","Lipo","Hypo",
-             "Diabetic","Foot","Stiff","Hear","Frac","Nephro")
+  thenames=c("Other(Chronic)","Neuropathy","Retinopathy","Blindness","Cardiovascular disease(Chronic)","Wounds (non-healing)",
+             "Amputation","Skin conditions (cutaneous manifestations)","Lipohypertrophy","Hypoglycemia unawareness",
+             "Diabetic myonecrosis","Foot problems (Charcot’s)","Stiff man’s syndrome","Hearing impairment","Fractures","Nephropathy")
   M=extractmorbidity(x,16)
   names(M)=thenames
   return(M)
@@ -73,13 +73,26 @@ extractchronic=function(x)
 
 extractMH=function(x)
 {
-  thenames=c("depress","OCD","schizophrenia","alcoholism","bipolar","anxiety","develop","delusional",
-             "psychosis","mood","drug","adjustment","alzheimers","cognitive","personality","klinfelter",
-             "PTSD","agaraphobia","binge","panic","cope","socialanx","manic","hoarding","eating","maladaptive",
-             "imsomnia","clusterc","schizo","ADD","generalizeanx","addiction")
-  M=extractmorbidity(x,32)
-  names(M)=thenames
-  return(M)
+  thenames=c("Depressive Disorder","Obsessive-compulsive and related disorders","Schizophrenia spectrum and other psychotic disorders",
+             "Substance-related and addictive disorders","Bipolar Disorders","Anxiety disorders",
+             "Neurodevelopmental disorder","Trauma and Stress-related disorders","Personality Disorders","Feeding and Eating Disorders",
+             "Sleep-wake disorders","Type Unspecified")
+  
+  possible=12
+  if(is.na(x[1]))
+  {
+    y=rep(F,possible)
+  }else{
+    has=rep(F,possible)
+    for(i in x){
+      if(!is.na(i)){
+        has[i]=T
+      }
+    }
+    y=has
+  }
+  names(y)=thenames
+  return(y)
 }
 
 
@@ -102,8 +115,8 @@ extractMH=function(x)
 # @import lubridate
 library(dplyr)
 Readdata=function(file.name)
-  {
-  data=read.csv("../inst/extdata/finaldata.csv",header=T)
+{
+  data=read.csv("inst/extdata/20160713.csv",header=T)
   #refer the column names by numbers
   
   #take the rows that are not NA for location and gender
@@ -118,7 +131,7 @@ Readdata=function(file.name)
   
   genderf=cut(data2[,4],breaks=c(0,1.5,3),labels=c("M","F"))
   
-  agef=cut(data2[,3],breaks=c(15,35,55,75,95))
+  agef=cut(data2[,3],breaks=c(17,45,65,80,95))
   
   repeatreferral=cut(data2[,7],breaks=c(-1,0.5,2),labels=c("No","Yes"))
   
@@ -128,7 +141,7 @@ Readdata=function(file.name)
   
   socialissue=cut(data2[,9],breaks=c(0,1.5,2.5,3.5,4.5,5.5,6.5,7.5,8.5,9.5,11,1000),
                   labels=c("social","community","income","elderly","smoke","drugs","housing","mobility","language","education","none"))
-#consider changing the short names to the actual names  
+  #consider changing the short names to the actual names  
   
   profcareplan=cut(data2[,64],breaks=c(-1,0.5,2,1000),labels=c("No","Yes","N/A"))
   
@@ -210,10 +223,13 @@ Readdata=function(file.name)
   
   
   #make a new dataframe (note that chronic and como factors are displaced one after the other, and chronics factors start from "Cother")
-  dataframe=data.frame(locationf,age=data2[,3],genderf,distance=data2[,5],referdate,repeatreferral,referralfrom,socialissue,
-                       data2[,10:13],como,chronic,admitdate,data2[,35:49],DCweight=as.numeric(data2[,50]),data2[,51:63],profcareplan,
-                       SelfMGoals,ExtentSelfM,Pdischwithtrans,dischargedate,DischSt,data2[,70:73],MH,data2[,79:86],Endorefer)
-  
+  dataframe=data.frame(locationf,age=data2[,3],genderf,agef,distance=data2[,5],referdate,repeatreferral,referralfrom,socialissue,
+                       DDSa=as.numeric(as.character(data2[,10])),DDSb=as.numeric(as.character(data2[,11])),DDSc=as.numeric(as.character(data2[,12])),
+                       DDSd=as.numeric(as.character(data2[,13])),
+                       como,chronic,admitdate,data2[,35:39],admit.waist=as.numeric(as.character(data2[,40])),data2[,41:49],
+                       DCweight=as.numeric(as.character(data2[,50])),
+                       data2[,51:63],profcareplan,
+                       SelfMGoals,ExtentSelfM,Pdischwithtrans,dischargedate,DischSt,data2[,70:73],MH,data2[,79:86],Endorefer)  
   
   #column 59-60: treat 999 N/A 
   return(dataframe)
@@ -400,41 +416,8 @@ dataframe %>% gather(admitdischarge,Microalbumin,c(admit.Micro.Albumin, D.C.Micr
 
 
 
-#'2c.Change in QoL index (emotional burden)
-dataframe %>% gather(admitdischarge,emotional-burden,c(DDS.Score.Sub.scale.A_Emotional.burden..Enrollment., DDS.Score.Sub.scale.A_Emotional.Burden..Discharge.)) %>% 
-  mutate(agef=cut(age,breaks=c(15,35,55,75,95))) %>% 
-  ggplot(aes(x=genderf,y=emotional-burden))+geom_boxplot()+facet_grid(agef~admitdischarge)
+#'2c..??Change in QoL index (which is DDS – Diabetes Distress Survey) = DDS Score Sub-scale B_Physician related distress (Discharge)
 
-dataframe %>% gather(admitdischarge,emotional-burden,c(DDS.Score.Sub.scale.A_Emotional.burden..Enrollment., DDS.Score.Sub.scale.A_Emotional.Burden..Discharge.)) %>% 
-  mutate(agef=cut(age,breaks=c(15,35,55,75,95))) %>% group_by(agef,genderf) %>% 
-  summarise(n=n())
-
-#'2c.Change in QoL index (physician related distress)
-dataframe %>% gather(admitdischarge,physician-related,c(DDS.Score.Sub.scale.B_Physician.related.distress..Enrollment., DDS.Score.Sub.scale.B_Physician.related.distress..Discharge.)) %>% 
-  mutate(agef=cut(age,breaks=c(15,35,55,75,95))) %>% 
-  ggplot(aes(x=genderf,y=physician-related))+geom_boxplot()+facet_grid(agef~admitdischarge)
-
-dataframe %>% gather(admitdischarge,physician-related,c(DDS.Score.Sub.scale.B_Physician.related.distress..Enrollment., DDS.Score.Sub.scale.B_Physician.related.distress..Discharge.)) %>% 
-  mutate(agef=cut(age,breaks=c(15,35,55,75,95))) %>% group_by(agef,genderf) %>% 
-  summarise(n=n())
-
-#'2c.Change in QoL index (Regimen related distress)
-dataframe %>% gather(admitdischarge,Regimen-related,c(DDS.Score.Sub.scale.C_Regimen.related.distress..Enrollment., DDS.Score.Sub.scale.C_Regimen.related.distress..Discharge.)) %>% 
-  mutate(agef=cut(age,breaks=c(15,35,55,75,95))) %>% 
-  ggplot(aes(x=genderf,y=Regimen-related))+geom_boxplot()+facet_grid(agef~admitdischarge)
-
-dataframe %>% gather(admitdischarge,Regimen-related,c(DDS.Score.Sub.scale.C_Regimen.related.distress..Enrollment., DDS.Score.Sub.scale.C_Regimen.related.distress..Discharge.)) %>% 
-  mutate(agef=cut(age,breaks=c(15,35,55,75,95))) %>% group_by(agef,genderf) %>% 
-  summarise(n=n())
-
-#'2c.Change in QoL index (Interpersonal distress)
-dataframe %>% gather(admitdischarge,interpersonal-distress,c(DDS.Score.Sub.scale.D_Interpersonal.distress..Enrollment., DDS.Score.Sub.scale.D_Interpersonal.distress..Discharge.)) %>% 
-  mutate(agef=cut(age,breaks=c(15,35,55,75,95))) %>% 
-  ggplot(aes(x=genderf,y=Regimen-related))+geom_boxplot()+facet_grid(agef~admitdischarge)
-
-dataframe %>% gather(admitdischarge,interpersonal-distress,c(DDS.Score.Sub.scale.D_Interpersonal.distress..Enrollment., DDS.Score.Sub.scale.D_Interpersonal.distress..Discharge.)) %>% 
-  mutate(agef=cut(age,breaks=c(15,35,55,75,95))) %>% group_by(agef,genderf) %>% 
-  summarise(n=n())
 
 #'2d. Change in clinical metrics for subgroups: mental health patients
 comomental <- table(dataframe$Mental)
@@ -460,7 +443,8 @@ dataframe %>% gather(admitdischarge,A1C,c(admit.A1C,D.C.A1C)) %>%
   summarise(n=n()) 
 
 
-#'2e.Does # social issues and co-morbidities impact health outcomes, to what extent
+#'2d. Change in clinical metrics for subgroups: frail elderly patients
+#extract patients with age >70??? 
 
 
 
