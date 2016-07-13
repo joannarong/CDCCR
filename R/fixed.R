@@ -1,4 +1,4 @@
-data=read.csv("inst/extdata/20160713.csv",header=T)
+data=read.csv("inst/extdata/20160713(2).csv",header=T)
 data
 dim(data)
 names(data)
@@ -20,7 +20,7 @@ locationf
 genderf=cut(data2[,4],breaks=c(0,1.5,3),labels=c("M","F"))
 genderf
 
-agef=cut(data2[,3],breaks=c(17,45,65,80,95))
+agef=cut(data2[,3],breaks=c(17,44,64,79,95),labels=c("18-44","45-64","65-79","80+"))
 agef
 
 repeatreferral=cut(data2[,7],breaks=c(-1,0.5,2),labels=c("No","Yes"))
@@ -189,7 +189,20 @@ dataframe=data.frame(locationf,age=data2[,3],genderf,agef,distance=data2[,5],ref
 head(dataframe)
 dim(dataframe)
 
-#column 59-60: treat 999 N/A 
+#column 59-60: treat 999 as N/A 
 
+
+#dataframe=data.frame(locationf,age=data2[,3],genderf,agef,distance=data2[,5],referdate,repeatreferral,referralfrom,socialissue,
+                     #DDSa=as.numeric(as.character(data2[,10])),DDSb=as.numeric(as.character(data2[,11])),DDSc=as.numeric(as.character(data2[,12])),
+                     #DDSd=as.numeric(as.character(data2[,13])),
+                     #como,chronic,admitdate,data2[,35:39],admit.waist=as.numeric(as.character(data2[,40])),data2[,41:49],
+                     #DCweight=as.numeric(as.character(data2[,50])),
+                     #data2[,51:58],DDS1=as.numeric(as.character(data2[,59])),
+                     #DDS2=as.numeric(as.character(data2[,60])),
+                     #DDS3=as.numeric(as.character(data2[,61])),
+                     #DDS4=as.numeric(as.character(data2[,62])),
+                     #data2[,63],profcareplan,
+                     #SelfMGoals,ExtentSelfM,Pdischwithtrans,dischargedate,DischSt,data2[,70:73],MH,data2[,79:86],Endorefer)
+#head(dataframe)
 
 
