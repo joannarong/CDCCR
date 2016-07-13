@@ -175,7 +175,7 @@ chronic=as.data.frame(chronic)
 MH=as.data.frame(MH)
 
 str(como)
-str(chronic)
+str(chronic) 
 str(MH)
 
 #make a new dataframe (note that chronic and como factors are displaced one after the other)
