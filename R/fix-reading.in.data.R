@@ -221,8 +221,8 @@ Readdata=function(file.name)
   chronic=as.data.frame(chronic)
   MH=as.data.frame(MH)
   dataframe=data.frame(locationf,age=data2[,3],genderf,agef,distance=data2[,5],referdate,repeatreferral,referralfrom,socialissue,
-                       DDSa=as.numeric(as.character(data2[,10])),DDSb=as.numeric(as.character(data2[,11])),DDSc=as.numeric(as.character(data2[,12])),
-                       DDSd=as.numeric(as.character(data2[,13])),
+                       DDS.Emotional.burden.Enrollment=as.numeric(as.character(data2[,10])),DDS.Physician.related.distress.Enrollment=as.numeric(as.character(data2[,11])),DDS.Regimen.related.distress.Enrollment=as.numeric(as.character(data2[,12])),
+                       DDS.Interpersonal.distress.Enrollment=as.numeric(as.character(data2[,13])),
                        como,chronic,admitdate,data2[,35:39],admit.waist=as.numeric(as.character(data2[,40])),data2[,41:49],
                        DCweight=as.numeric(as.character(data2[,50])),
                        data2[,51:63],profcareplan,
@@ -410,38 +410,38 @@ dataframe %>% gather(admitdischarge,Microalbumin,c(admit.Micro.Albumin, D.C.Micr
 
 
 #'2c.Change in QoL index (emotional burden)
-dataframe %>% gather(admitdischarge,emotional-burden,c(DDSa,DDS.Score.Sub.scale.A_Emotional.Burden..Discharge.)) %>% 
+dataframe %>% gather(admitdischarge,emotionalBurden,c(DDS.Emotional.burden.Enrollment,DDS.Score.Sub.scale.A_Emotional.Burden..Discharge.)) %>% 
   mutate(agef=cut(age,breaks=c(17,44,64,79,95),labels=c("18-44","45-64","65-79","80+"))) %>% 
-  ggplot(aes(x=genderf,y=emotional-burden))+geom_boxplot()+facet_grid(agef~admitdischarge)
+  ggplot(aes(x=genderf,y=emotionalBurden))+geom_boxplot()+facet_grid(agef~admitdischarge)
 
-dataframe %>% gather(admitdischarge,emotional-burden,c(DDSa,DDS1)) %>% 
+dataframe %>% gather(admitdischarge,emotionalBurden,c(DDS.Emotional.burden.Enrollment,DDS.Score.Sub.scale.A_Emotional.Burden..Discharge.)) %>% 
   mutate(agef=cut(age,breaks=c(17,44,64,79,95),labels=c("18-44","45-64","65-79","80+"))) %>% group_by(agef,genderf) %>% 
   summarise(n=n())
 
 #'2c.Change in QoL index (physician related distress)
-dataframe %>% gather(admitdischarge,physician-related,c(DDSb, DDS.Score.Sub.scale.B_Physician.related.distress..Discharge.)) %>% 
+dataframe %>% gather(admitdischarge,physicianRelated,c(DDS.Physician.related.distress.Enrollment, DDS.Score.Sub.scale.B_Physician.related.distress..Discharge.)) %>% 
   mutate(agef=cut(age,breaks=c(17,44,64,79,95),labels=c("18-44","45-64","65-79","80+"))) %>% 
-  ggplot(aes(x=genderf,y=physician-related))+geom_boxplot()+facet_grid(agef~admitdischarge)
+  ggplot(aes(x=genderf,y=physicianRelated))+geom_boxplot()+facet_grid(agef~admitdischarge)
 
-dataframe %>% gather(admitdischarge,physician-related,c(DDSb, DDS.Score.Sub.scale.B_Physician.related.distress..Discharge.)) %>% 
+dataframe %>% gather(admitdischarge,physicianRelated,c(DDS.Physician.related.distress.Enrollment, DDS.Score.Sub.scale.B_Physician.related.distress..Discharge.)) %>% 
   mutate(agef=cut(age,breaks=c(17,44,64,79,95),labels=c("18-44","45-64","65-79","80+"))) %>% group_by(agef,genderf) %>% 
   summarise(n=n())
 
 #'2c.Change in QoL index (Regimen related distress)
-dataframe %>% gather(admitdischarge,Regimen-related,c(DDSc, DDS.Score.Sub.scale.C_Regimen.related.distress..Discharge.)) %>% 
+dataframe %>% gather(admitdischarge,RegimenRelated,c(DDS.Regimen.related.distress.Enrollment, DDS.Score.Sub.scale.C_Regimen.related.distress..Discharge.)) %>% 
   mutate(agef=cut(age,breaks=c(17,44,64,79,95),labels=c("18-44","45-64","65-79","80+"))) %>% 
-  ggplot(aes(x=genderf,y=Regimen-related))+geom_boxplot()+facet_grid(agef~admitdischarge)
+  ggplot(aes(x=genderf,y=RegimenRelated))+geom_boxplot()+facet_grid(agef~admitdischarge)
 
-dataframe %>% gather(admitdischarge,Regimen-related,c(DDSc, DDS.Score.Sub.scale.C_Regimen.related.distress..Discharge.)) %>% 
+dataframe %>% gather(admitdischarge,RegimenRelated,c(DDS.Regimen.related.distress.Enrollment, DDS.Score.Sub.scale.C_Regimen.related.distress..Discharge.)) %>% 
   mutate(agef=cut(age,breaks=c(17,44,64,79,95),labels=c("18-44","45-64","65-79","80+"))) %>% group_by(agef,genderf) %>% 
   summarise(n=n())
 
 #'2c.Change in QoL index (Interpersonal distress)
-dataframe %>% gather(admitdischarge,interpersonal-distress,c(DDSd, DDS.Score.Sub.scale.D_Interpersonal.distress..Discharge.)) %>% 
+dataframe %>% gather(admitdischarge,interpersonalDistress,c(DDS.Interpersonal.distress.Enrollment, DDS.Score.Sub.scale.D_Interpersonal.distress..Discharge.)) %>% 
   mutate(agef=cut(age,breaks=c(17,44,64,79,95),labels=c("18-44","45-64","65-79","80+"))) %>% 
-  ggplot(aes(x=genderf,y=Regimen-related))+geom_boxplot()+facet_grid(agef~admitdischarge)
+  ggplot(aes(x=genderf,y=interpersonalDistress))+geom_boxplot()+facet_grid(agef~admitdischarge)
 
-dataframe %>% gather(admitdischarge,interpersonal-distress,c(DDSd, DDS.Score.Sub.scale.D_Interpersonal.distress..Discharge.)) %>% 
+dataframe %>% gather(admitdischarge,interpersonalDistress,c(DDS.Interpersonal.distress.Enrollment, DDS.Score.Sub.scale.D_Interpersonal.distress..Discharge.)) %>% 
   mutate(agef=cut(age,breaks=c(17,44,64,79,95),labels=c("18-44","45-64","65-79","80+"))) %>% group_by(agef,genderf) %>% 
   summarise(n=n())
 

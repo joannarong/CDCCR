@@ -180,8 +180,8 @@ str(MH)
 
 #make a new dataframe (note that chronic and como factors are displaced one after the other)
 dataframe=data.frame(locationf,age=data2[,3],genderf,agef,distance=data2[,5],referdate,repeatreferral,referralfrom,socialissue,
-                     DDSa=as.numeric(as.character(data2[,10])),DDSb=as.numeric(as.character(data2[,11])),DDSc=as.numeric(as.character(data2[,12])),
-                     DDSd=as.numeric(as.character(data2[,13])),
+                     DDS.Emotional.burden.Enrollment=as.numeric(as.character(data2[,10])),DDS.Physician.related.distress.Enrollment=as.numeric(as.character(data2[,11])),DDS.Regimen.related.distress.Enrollment=as.numeric(as.character(data2[,12])),
+                     DDS.Interpersonal.distress.Enrollment=as.numeric(as.character(data2[,13])),
                      como,chronic,admitdate,data2[,35:39],admit.waist=as.numeric(as.character(data2[,40])),data2[,41:49],
                      DCweight=as.numeric(as.character(data2[,50])),
                      data2[,51:63],profcareplan,
@@ -193,8 +193,8 @@ dim(dataframe)
 
 
 #dataframe=data.frame(locationf,age=data2[,3],genderf,agef,distance=data2[,5],referdate,repeatreferral,referralfrom,socialissue,
-                     #DDSa=as.numeric(as.character(data2[,10])),DDSb=as.numeric(as.character(data2[,11])),DDSc=as.numeric(as.character(data2[,12])),
-                     #DDSd=as.numeric(as.character(data2[,13])),
+                     #DDS.Emotional.burden.Enrollment=as.numeric(as.character(data2[,10])),DDS.Physician.related.distress.Enrollment=as.numeric(as.character(data2[,11])),DDS.Regimen.related.distress.Enrollment=as.numeric(as.character(data2[,12])),
+                     #DDS.Interpersonal.distress.Enrollment=as.numeric(as.character(data2[,13])),
                      #como,chronic,admitdate,data2[,35:39],admit.waist=as.numeric(as.character(data2[,40])),data2[,41:49],
                      #DCweight=as.numeric(as.character(data2[,50])),
                      #data2[,51:58],DDS1=as.numeric(as.character(data2[,59])),
