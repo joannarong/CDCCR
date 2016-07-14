@@ -37,11 +37,11 @@ count23=function(x)
   ans=ifelse(is.na(tab["23"]),0,tab["23"])
 }
 
-count.discharged.status=function(x)
-{
-  tab=table(t(x))
-  ans=ifelse(is.na(tab["2"]),0,tab["2"])
-}
+#count.discharged.status=function(x)
+#{
+  #tab=table(t(x))
+  #ans=ifelse(is.na(tab["2"]),0,tab["2"])
+#}
 
 #'built a function that count the total numbers of actual mental health issue for each patient 
 countmh=function(x)
