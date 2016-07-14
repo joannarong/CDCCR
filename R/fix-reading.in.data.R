@@ -37,6 +37,11 @@ count23=function(x)
   ans=ifelse(is.na(tab["23"]),0,tab["23"])
 }
 
+count.discharged.status=function(x)
+{
+  tab=table(t(x))
+  ans=ifelse(is.na(tab["2"]),0,tab["2"])
+}
 
 #'built a function that count the total numbers of actual mental health issue for each patient 
 countmh=function(x)
@@ -116,7 +121,7 @@ extractMH=function(x)
 library(dplyr)
 Readdata=function(file.name)
 {
-  data=read.csv("inst/extdata/20160713(2).csv",header=T)
+  data=read.csv("inst/extdata/20160714.csv",header=T)
   #refer the column names by numbers
   
   #take the rows that are not NA for location and gender
@@ -292,14 +297,12 @@ summary(sumofchronicfoeachpt) #each pt have avg 1 chronic
 comomental <- table(dataframe$Mental)
 comomental
 which(dataframe$Mental)
-#'it appears that 189 patients have mental health issue as comorbidity, but there are lots of repeats (refers to line 184-185)
-#'need to verify with PI 
 
 #'numbers of patients with "other" as co-morbidity
 conmoother <- table(dataframe$Other)
 conmoother
 which(dataframe$Other)
-#335 vs. 230 --> very big difference 
+#there are lots of duplicates for "other" as these are sepeated issues that don't have their own codes --> but we agree that to ignore it
 
 #'numbers of patients with "eat" as co-morbidity
 comoeat <- table(dataframe$Eat)
@@ -357,7 +360,23 @@ dataframe %>% gather(admitdischarge,A1C,c(admit.A1C,D.C.A1C)) %>%
 
 dataframe %>% gather(admitdischarge,A1C,c(admit.A1C,D.C.A1C)) %>% 
   filter(is.na(A1C)) %>% select(c(admitdischarge,A1C)) 
-#'found 116 NA(missing values) for A1C in total (more for discharged A1C)
+#'found 104 NA(missing values) for A1C in total (102 for discharged A1C)
+
+
+#'to find out how many of those who have missing data D.C.A1C are actually withdrew becuase of death/withdrawal
+c=subset(dataframe, select=c("admit.A1C","D.C.A1C","DischSt"))
+c
+c %>% gather(admitdischarge,A1C,c(admit.A1C,D.C.A1C)) %>% filter(is.na(A1C)) 
+
+#dischargenumber=apply(data2[,69],1,count.discharged.status)
+#dischargenumber
+
+
+
+
+
+
+
 
 #'2a.Lipids level(HDL cholesterol):
 aggregate(cbind(admit.HDL.Cholesterol, D.C.HDL.Cholesterol)~genderf+agef,data=dataframe,mean)

@@ -1,4 +1,4 @@
-data=read.csv("inst/extdata/20160713(2).csv",header=T)
+data=read.csv("inst/extdata/20160714.csv",header=T)
 data
 dim(data)
 names(data)
