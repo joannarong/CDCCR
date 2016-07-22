@@ -1,4 +1,4 @@
-data=read.csv("inst/extdata/20160714.csv",header=T)
+data=read.csv("inst/extdata/20160715.csv",header=T)
 data
 dim(data)
 names(data)
@@ -97,7 +97,7 @@ extractmorbidity(pt1co,23) #testing pt1 - work!
 extractco=function(x)
 {
   thenames=c("Other","Eating Disorders","Hypertension","Cardiovascular disease","Chronic kidney disease",
-             "Retinopathy or Other eye disease"," Non-healing wounds (greater than 3 months)","Neuropathy","Liver disease (fatty liver)",
+             "Retinopathy or Other eye disease","Non-healing wounds (greater than 3 months)","Neuropathy","Liver disease (fatty liver)",
              "Peripheral vascular disease","Obesity (BMI > 30)","Current malignancy/cancer treatment","Hyperlipidemia",
              "Thyroid disease (other endocrinopathies POCT, Cushings)","Dementia","Pulmonary disease (COPD, Asthma)","Obstructive sleep apnea",
              "HIV/AIDS","Pancreas Diseases","Celiac Disease","Genetic Syndromes","Deafness and/or Blindness","Mental health") 
@@ -180,29 +180,20 @@ str(MH)
 
 #make a new dataframe (note that chronic and como factors are displaced one after the other)
 dataframe=data.frame(locationf,age=data2[,3],genderf,agef,distance=data2[,5],referdate,repeatreferral,referralfrom,socialissue,
-                     DDS.Emotional.burden.Enrollment=as.numeric(as.character(data2[,10])),DDS.Physician.related.distress.Enrollment=as.numeric(as.character(data2[,11])),DDS.Regimen.related.distress.Enrollment=as.numeric(as.character(data2[,12])),
-                     DDS.Interpersonal.distress.Enrollment=as.numeric(as.character(data2[,13])),
+                     DDS.Emotional.burden.Enrollment=TidyDDSnumbers(data2[,10]),DDS.Emotional.burden.Enrollment.code=TidyDDScode(data2[,10]),
+                     DDS.Physician.related.distress.Enrollment=TidyDDSnumbers(data2[,11]),DDS.Physician.related.distress.Enrollment.code=TidyDDScode(data2[,11]),
+                     DDS.Regimen.related.distress.Enrollment=TidyDDSnumbers(data2[,12]),DDS.Regimen.related.distress.Enrollment.code=TidyDDScode(data2[,12]),
+                     DDS.Interpersonal.distress.Enrollment=TidyDDSnumbers(data2[,13]),DDS.Interpersonal.distress.Enrollment.code=TidyDDScode(data2[,13]),
                      como,chronic,admitdate,data2[,35:39],admit.waist=as.numeric(as.character(data2[,40])),data2[,41:49],
                      DCweight=as.numeric(as.character(data2[,50])),
-                     data2[,51:63],profcareplan,
+                     data2[,51:58],
+                     DDS.Emotional.burden.Discharge=TidyDDSnumbers(data2[,59]),DDS.Emotional.burden.Discharge.code=TidyDDScode(data2[,59]),
+                     DDS.Physician.related.distress.Discharge=TidyDDSnumbers(data2[,60]),DDS.Physician.related.distress.Discharge.code=TidyDDScode(data2[,60]),
+                     DDS.Regimen.related.distress.Discharge=TidyDDSnumbers(data2[,61]),DDS.Regimen.related.distress.Discharge.code=TidyDDScode(data2[,61]),
+                     DDS.Interpersonal.distress.Discharge=TidyDDSnumbers(data2[,62]),DDS.Interpersonal.distress.Discharge.code=TidyDDScode(data2[,62]),
+                     data2[,63],profcareplan,
                      SelfMGoals,ExtentSelfM,Pdischwithtrans,dischargedate,DischSt,data2[,70:73],MH,data2[,79:86],Endorefer)
 head(dataframe)
 dim(dataframe)
-
-#column 59-60: treat 999 as N/A 
-
-
-#dataframe=data.frame(locationf,age=data2[,3],genderf,agef,distance=data2[,5],referdate,repeatreferral,referralfrom,socialissue,
-                     #DDS.Emotional.burden.Enrollment=as.numeric(as.character(data2[,10])),DDS.Physician.related.distress.Enrollment=as.numeric(as.character(data2[,11])),DDS.Regimen.related.distress.Enrollment=as.numeric(as.character(data2[,12])),
-                     #DDS.Interpersonal.distress.Enrollment=as.numeric(as.character(data2[,13])),
-                     #como,chronic,admitdate,data2[,35:39],admit.waist=as.numeric(as.character(data2[,40])),data2[,41:49],
-                     #DCweight=as.numeric(as.character(data2[,50])),
-                     #data2[,51:58],DDS1=as.numeric(as.character(data2[,59])),
-                     #DDS2=as.numeric(as.character(data2[,60])),
-                     #DDS3=as.numeric(as.character(data2[,61])),
-                     #DDS4=as.numeric(as.character(data2[,62])),
-                     #data2[,63],profcareplan,
-                     #SelfMGoals,ExtentSelfM,Pdischwithtrans,dischargedate,DischSt,data2[,70:73],MH,data2[,79:86],Endorefer)
-#head(dataframe)
 
 
