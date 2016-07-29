@@ -126,25 +126,6 @@ TidyDDSnumbers=function(x){
   return(code)
 }
 
-#'testing the two functions above - work! 
-z=c("1","2","11",".","999",NA,"")
-z
-
-data2[,10]->x
-x
-data2[,11]->e
-e
-
-TidyDDScode(z)
-TidyDDSnumbers(z)
-table(TidyDDScode(e))
-table(TidyDDScode(x))
-cbind(as.character(x),TidyDDScode(x),TidyDDSnumbers(x))
-cbind(as.character(e),TidyDDScode(e),TidyDDSnumbers(e))
-cbind(as.character(z),TidyDDScode(z),TidyDDSnumbers(z))
-
-
-
 
 # read data in from csv
 # 
@@ -318,7 +299,7 @@ Boxplot analysis suggest that there are no great difference in midian and spread
 ```{r}
 boxplot(dataframe$distance~dataframe$locationf)
 ```
-
+The median distance to both sites are very similarl; more poeple who need to travel longer distance tend to visit Mississauga site.
 
 
 1b.numbers of patients with each social issue/range of social issues:
@@ -329,18 +310,21 @@ plot(dataframe$socialissue,las=2)
 ```
 Compare to the impactful issues you mentioned, the following social issues appears to be more frequent: low income, social support, smoking, elderly 
 
+```{r}
+names(dataframe)
+```
 
 
 1c.numbers of patients with each co-morbidity
 ```{r}
-a=subset(dataframe, select=c("Other","Eating.Disorders","Hypertension","Cardiovascular.disease","Chronic.kidney.disease","Retinopathy.or.Other.eye.disease","Non.healing.wounds..greater.than.3.months.",
+avgcomo=subset(dataframe, select=c("Other","Eating.Disorders","Hypertension","Cardiovascular.disease","Chronic.kidney.disease","Retinopathy.or.Other.eye.disease","X.Non.healing.wounds..greater.than.3.months.",
                           "Neuropathy","Liver.disease..fatty.liver.","Peripheral.vascular.disease","Obesity..BMI...30.","Current.malignancy.cancer.treatment","Hyperlipidemia","Thyroid.disease..other.endocrinopathies.POCT..Cushings.","Dementia",
                              "Pulmonary.disease..COPD..Asthma.","Obstructive.sleep.apnea","HIV.AIDS","Pancreas.Diseases","Celiac.Disease","Genetic.Syndromes","Deafness.and.or.Blindness","Mental.health"))
-a
+avgcomo
 
 library(tidyr)
 library(dplyr)
-a %>% gather(col,v,Other:Mental.health) %>% table()
+avgcomo %>% gather(col,v,Other:Mental.health) %>% table()
 ```
 Provide information about distribution of co-morbidity among patients; The co-morbidities with the highest frequency:Cardiovascular.disease
 
@@ -348,7 +332,7 @@ Provide information about distribution of co-morbidity among patients; The co-mo
 
 1c.average # of co-morbidities
 ```{r}
-sumofcomofoeachpt=apply(a,1,sum)
+sumofcomofoeachpt=apply(avgcomo,1,sum)
 summary(sumofcomofoeachpt) 
 ```
 Each patients have average of 3 different co-morbidity
@@ -356,7 +340,7 @@ Each patients have average of 3 different co-morbidity
 
 
 1c.numbers of patients with each chronic-morbidity 
-```{r}
+```{r,w}
 b=subset(dataframe, select=c("Other.Chronic.","Neuropathy.1","Retinopathy","Blindness","Cardiovascular.disease.Chronic.","Wounds..non.healing.",
                              "Amputation","Skin.conditions..cutaneous.manifestations.","Lipohypertrophy","Hypoglycemia.unawareness",
                              "Diabetic.myonecrosis","Foot.problems..Charcot.s.","Stiff.man.s.syndrome","Hearing.impairment","Fractures","Nephropathy"))
@@ -433,14 +417,34 @@ Keep in mind that there are 97 missing A1C values in total (2 are from admited A
 
 2a.comparing admit and discharged clinical matrix(Lipids level(HDL cholesterol))
 ```{r}
-aggregate(cbind(admit.HDL.Cholesterol,D.C.HDL.Cholesterol)~genderf+agef,data=dataframe,mean)
-
-
 dataframe %>% gather(admitdischarge,LipidHDL,c(admit.HDL.Cholesterol, D.C.HDL.Cholesterol)) %>% 
-  mutate(agef=cut(age,breaks=c(17,44,64,79,95),labels=c("18-44","45-64","65-79","80+"))) %>% 
+  mutate(agef=cut(age,breaks=c(17,44,64,79,95),labels=c("18-44","45-64","65-79","80+")))->mutatea
+  mutatea %>% ggplot(aes(x=genderf,y=LipidHDL))+geom_boxplot()+facet_grid(agef~admitdischarge) 
+
+```
+female have higher HDL lipid level in general regardless of treatment, age.
+distribution of male are typically between 0.9 to 1.3; and distrubution of female is about 1 to 1.4 - there is only gender effect as female are consistently higher, but it's consistent between admit and discharged HDL cholesterol level = treatment doesn't seem to have effect as the changes are very small.
+
+added filter to select HDLlevel less than 3
+```{r}
+mutatea %>% filter(LipidHDL<3) %>% 
   ggplot(aes(x=genderf,y=LipidHDL))+geom_boxplot()+facet_grid(agef~admitdischarge)
 ```
-need help interpreting this
+
+summary of the data
+```{r}
+mutatea %>% group_by(admitdischarge,agef,genderf) %>% summarise(Q1=quantile(LipidHDL,0.25,na.rm=T),
+    med=median(LipidHDL,na.rm=T),Q3=quantile(LipidHDL,0.75,na.rm=T),missing=sum(is.na(LipidHDL)),n=n())
+```
+
+analysis of variance - pending
+```{r}
+mutatea
+```
+
+
+
+
 
 2a.comparing admit and discharged clinical matrix(Lipids level(LDL cholesterol))
 ```{r}
@@ -458,11 +462,18 @@ The median of both admit and discharged LDL cholesterol level appear to be very 
 aggregate(cbind(admit.eGFR, D.C.eGFR)~genderf+agef,data=dataframe,mean)
 
 dataframe %>% gather(admitdischarge,eGFR,c(admit.eGFR, D.C.eGFR)) %>% 
-  mutate(agef=cut(age,breaks=c(17,44,64,79,95),labels=c("18-44","45-64","65-79","80+"))) %>% 
-  ggplot(aes(x=genderf,y=eGFR))+geom_boxplot()+facet_grid(agef~admitdischarge)
+  mutate(agef=cut(age,breaks=c(17,44,64,79,95),labels=c("18-44","45-64","65-79","80+")))->mutatea
+  mutatea %>% ggplot(aes(x=genderf,y=eGFR))+geom_boxplot()+facet_grid(agef~admitdischarge)
 ```
 -eGFR scores then to be lower as age increase 
 -median of discharged eGFR value decrease substentically for male in age group 18-44
+
+numerical summary of the data
+```{r}
+mutatea %>% group_by(admitdischarge,agef,genderf) %>% summarise(Q1=quantile(eGFR,0.25,na.rm=T),
+    med=median(eGFR,na.rm=T),Q3=quantile(eGFR,0.75,na.rm=T),missing=sum(is.na(eGFR)),n=n())
+```
+the treatment effect appears to be samll/non existent as the difference between admit and discharge across gender and age is consistent; however, there is age effect as as age increase, eGFR value decrease (At least for the first 3 age groups). there is no consistent gender effect. 
 
 2a.comparing admit and discharged clinical matrix(Micro Albumin)
 ```{r}
@@ -505,18 +516,25 @@ also explore how the data look like in scatterplot :scatterplot of emotional bur
 
 2c.Change in QoL index (physician related distress)
 ```{r}
-dataframe %>% gather(admitdischarge,physicianRelated,c(DDS.Physician.related.distress.Enrollment,DDS.Physician.related.distress.Discharge)) %>% 
-  mutate(agef=cut(age,breaks=c(17,44,64,79,95),labels=c("18-44","45-64","65-79","80+"))) %>% 
-  ggplot(aes(x=genderf,y=physicianRelated))+geom_boxplot()+facet_grid(agef~admitdischarge)
+dataframe %>% mutate(id=row_number()) %>% 
+  gather(admitdischarge,physicianRelated,c(DDS.Physician.related.distress.Enrollment,DDS.Physician.related.distress.Discharge)) %>% 
+  mutate(agef=cut(age,breaks=c(17,44,64,79,95),labels=c("18-44","45-64","65-79","80+")))->mutatea 
+  mutatea %>% ggplot(aes(x=genderf,y=physicianRelated))+geom_boxplot()+facet_grid(agef~admitdischarge)
 
 ```
 
+spaghetti plot
+```{r}
+mutatea %>% ggplot(aes(x=admitdischarge,y=physicianRelated,group=id,color=factor(id))) + geom_point() + geom_line() + facet_grid(agef~genderf)+guides(color=F)
+```
+this plot shows treatment effects as most of the lines go down 
 
 2c.Change in QoL index (Regimen related distress)
 ```{r}
-dataframe %>% gather(admitdischarge,RegimenRelated,c(DDS.Regimen.related.distress.Enrollment,DDS.Regimen.related.distress.Discharge)) %>% 
-  mutate(agef=cut(age,breaks=c(17,44,64,79,95),labels=c("18-44","45-64","65-79","80+"))) %>% 
-  ggplot(aes(x=genderf,y=RegimenRelated))+geom_boxplot()+facet_grid(agef~admitdischarge)
+dataframe %>% gather(admitdischarge,RegimenRelated,c(DDS.Regimen.related.distress.Enrollment,DDS.Regimen.related.distress.Discharge)) 
+#%>% 
+  #mutate(agef=cut(age,breaks=c(17,44,64,79,95),labels=c("18-44","45-64","65-79","80+"))) %>% 
+  #ggplot(aes(x=genderf,y=RegimenRelated))+geom_boxplot()+facet_grid(agef~admitdischarge)
 ```
 -Both female and male patients across all age groups displace substentically lower discharged Regimen related distress score! 
 -among them, both male and female patients in age group 80+ have the lowest admit and discharged Regimen related distress score
@@ -530,8 +548,28 @@ dataframe %>% gather(admitdischarge,interpersonalDistress,c(DDS.Interpersonal.di
   ggplot(aes(x=genderf,y=interpersonalDistress))+geom_boxplot()+facet_grid(agef~admitdischarge)
 ```
 -similarly, both female and male patients across all age groups displace substentically lower interpersonal distress score.
--both male and female patients in age group 80+ have the lowest admit and discharged Regimen related distress score
--spread issue??? skew to the right ...
+-both male and female patients in age group 80+ have the lowest admit and discharged interpersonal distress score
+-leave the outlier 
+
+
+spaagetti plot for the data 
+```{r}
+dataframe %>% mutate(id=row_number()) %>% gather(admitdischarge,interpersonalDistress,c(DDS.Interpersonal.distress.Enrollment,DDS.Interpersonal.distress.Discharge)) %>% 
+  mutate(agef=cut(age,breaks=c(17,44,64,79,95),
+                  labels=c("18-44","45-64","65-79","80")))->mutatea
+  mutatea %>% ggplot(aes(x=genderf,y=interpersonalDistress))+geom_boxplot()+facet_grid(agef~admitdischarge)
+  
+  mutatea %>% ggplot(aes(x=admitdischarge,y=interpersonalDistress,group=id,color=factor(id)))+geom_point()+geom_line()+facet_grid(agef~genderf)+guides(color=F)
+```
+show treatment effect - line goes down 
+
+numeric summary
+```{r}
+mutatea %>% group_by(genderf,agef,admitdischarge) %>% summarise(Q1=quantile(interpersonalDistress,0.25,na.rm=T),
+    med=median(interpersonalDistress,na.rm=T),Q3=quantile(interpersonalDistress,0.75,na.rm=T),missing=sum(is.na(interpersonalDistress)),n=n())
+```
+show often a big treatment effect 
+
 
 
 2d. Change in clinical metrics(A1C) for subgroups: mental health patients
@@ -599,7 +637,24 @@ dataframe %>% gather(admitdischarge,micro.albumin,c(admit.Micro.Albumin, D.C.Mic
   ggplot(aes(x=genderf,y=micro.albumin))+geom_boxplot()+facet_grid(Mental.health~admitdischarge)
 ```
 many outliers shown
-need help with interpretation
+
+numerical summary wwithout difference
+```{r}
+dataframe %>% gather(admitdischarge,micro.albumin,c(admit.Micro.Albumin, D.C.Micro.Albumin)) %>% group_by(genderf,agef,admitdischarge,Mental.health) %>% summarise(Q1=quantile(micro.albumin,0.25,na.rm=T),
+    med=median(micro.albumin,na.rm=T),Q3=quantile(micro.albumin,0.75,na.rm=T),missing=sum(is.na(micro.albumin)),n=n()) %>% as.data.frame()
+
+```
+
+
+
+numerical summary - with difference (discharge-admit)
+```{r}
+dataframe %>% mutate(diff=D.C.Micro.Albumin-admit.Micro.Albumin) %>% 
+  mutate(agef=cut(age,breaks=c(17,44,64,79,95),labels=c("18-44","45-64","65-79","80")))->mutatea
+
+mutatea %>% group_by(genderf,agef,Mental.health) %>% summarise(Q1=quantile(diff,0.25,na.rm=T),
+    med=median(diff,na.rm=T),Q3=quantile(diff,0.75,na.rm=T),missing=sum(is.na(diff)),n=n()) %>% as.data.frame()
+```
 
 
 
