@@ -1,8 +1,8 @@
 ---
-title: "STAD97 PROJECT"
+title: "STAD97PROJECT"
 author: "Joanna(Yijing) Rong"
 date: "July 22, 2016"
-output: word_document
+output: html_document
 ---
 Appendix - Data Organization
 ```{r}
@@ -454,6 +454,7 @@ dataframe %>% gather(admitdischarge,LipidLDL,c(admit.LDL.Cholesterol, D.C.LDL.Ch
   mutate(agef=cut(age,breaks=c(17,44,64,79,95),labels=c("18-44","45-64","65-79","80+"))) %>% 
   ggplot(aes(x=genderf,y=LipidLDL))+geom_boxplot()+facet_grid(agef~admitdischarge)
 ```
+
 The median of both admit and discharged LDL cholesterol level appear to be very similar, suggesting very minor treatment effect on this clinical matrix
 
 
@@ -531,10 +532,7 @@ this plot shows treatment effects as most of the lines go down
 
 2c.Change in QoL index (Regimen related distress)
 ```{r}
-dataframe %>% gather(admitdischarge,RegimenRelated,c(DDS.Regimen.related.distress.Enrollment,DDS.Regimen.related.distress.Discharge)) 
-#%>% 
-  #mutate(agef=cut(age,breaks=c(17,44,64,79,95),labels=c("18-44","45-64","65-79","80+"))) %>% 
-  #ggplot(aes(x=genderf,y=RegimenRelated))+geom_boxplot()+facet_grid(agef~admitdischarge)
+dataframe %>% gather(admitdischarge,RegimenRelated,c(DDS.Regimen.related.distress.Enrollment,DDS.Regimen.related.distress.Discharge)) %>% mutate(agef=cut(age,breaks=c(17,44,64,79,95),labels=c("18-44","45-64","65-79","80+"))) %>% ggplot(aes(x=genderf,y=RegimenRelated))+geom_boxplot()+facet_grid(agef~admitdischarge)
 ```
 -Both female and male patients across all age groups displace substentically lower discharged Regimen related distress score! 
 -among them, both male and female patients in age group 80+ have the lowest admit and discharged Regimen related distress score
